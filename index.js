@@ -6,9 +6,9 @@ import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./config/swagger.js";
 
 import connectDB from "./config/db.js";
-import globalErrorHandler from "./middlewares/error.js";
-import customError from "./utils/customError.js";
+import globalErrorHandler from "./controllers/errorController.js";
 
+import customError from "./utils/customError.js";
 
 dotenv.config();
 
@@ -32,13 +32,15 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("*", (req, res, next) => {
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+/* app.get("*", (req, res, next) => {
   const err = new customError(
     `Can't find ${req.originalUrl} on this server!`,
     404
   );
   next(err);
-});
+}); */
 
 app.use(globalErrorHandler);
 

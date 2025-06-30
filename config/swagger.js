@@ -22,8 +22,10 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./routes/*.js"],
+  apis: ["./routes/test.js"], // ✅ Make sure this file exists
 };
+
+
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
