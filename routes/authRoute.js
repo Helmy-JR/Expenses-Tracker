@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post("/signup",signup);
 router.post("/login",login);
-router.post("/google",google);
+router.post("/google",googleId);
 
 router.post("/sendCode", sendCode);
 router.post("/verifyCode", verifyCode);
