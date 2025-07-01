@@ -1,14 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
-import cors from "cors";
+import customError from "./utils/customError.js";
+import globalErrorHandler from "./controllers/errorController.js";
+import connectDB from "./config/db.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./config/swagger.js";
+import cors from "cors";
 
-import connectDB from "./config/db.js";
-import globalErrorHandler from "./controllers/errorController.js";
-
-import customError from "./utils/customError.js";
+import userRoute from "./routes/userRoute.js";
+import expensesRoute from "./routes/expensesRoute.js";
+import authRoute from "./routes/authRoute.js";
 
 dotenv.config();
 
@@ -27,19 +29,18 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 204,
 };
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-/* app.get("*", (req, res, next) => {
-  const err = new customError(
-    `Can't find ${req.originalUrl} on this server!`,
-    404
-  );
-  next(err);
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/expenses", expensesRoute);
+
+/* app.all("*", (req, res, next) => {
+  next(new customError(`Can't find ${req.originalUrl} on this server!`, 404));
 }); */
 
 app.use(globalErrorHandler);

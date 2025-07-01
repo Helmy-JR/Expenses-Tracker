@@ -1,0 +1,130 @@
+import Expense from "../models/expensesModel.js";
+import asyncHandler from "express-async-handler";
+import customError from "../utils/customError.js";
+
+const creatExpense = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const { title, amount, date, category, notes } = req.body;
+
+  if (!title || !amount || !date) {
+    return next(new customError("Title, amount, and date are required", 400));
+  }
+
+  const expense = new Expense({
+    userId,
+    title,
+    amount,
+    date,
+    category: category,
+    notes: notes || "",
+  });
+  const savedExpense = await expense.save();
+  if (!savedExpense) {
+    return next(new customError("Failed to create expense", 500));
+  }
+  res
+    .status(201)
+    .json({ message: "Expense created successfully", expense: savedExpense });
+});
+
+const getExpenses = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const { filter, startDate, endDate } = req.query;
+
+  const query = { userId };
+
+  if (filter) {
+    const now = new Date(); //	2025-06-01
+
+    if (filter === "week") {
+      const weekAgo = new Date();
+      weekAgo.setDate(now.getDate() - 7);
+      query.date = { $gte: weekAgo, $lte: now };
+    } else if (filter === "month") {
+      const monthAgo = new Date();
+      monthAgo.setMonth(now.getMonth() - 1);
+      query.date = { $gte: monthAgo, $lte: now };
+    } else if (filter === "3months") {
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(now.getMonth() - 3);
+      query.date = { $gte: threeMonthsAgo, $lte: now };
+    }
+  }
+
+  if (startDate && endDate) {
+    query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+  }
+
+  const expenses = await Expense.find(query).sort({ date: -1 });
+
+  if (!expenses) {
+    return next(new customError("No expenses found", 404));
+  }
+  res.status(200).json({
+    message: "Expenses retrieved successfully",
+    Data: {
+      length: expenses.length,
+      expenses: expenses,
+    },
+  });
+});
+
+const getExpensesById = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const expenseId = req.params.id;
+
+  const expense = await Expense.findOne({ _id: expenseId, userId });
+
+  if (!expense) {
+    return next(new customError("Expense not found", 404));
+  }
+
+  res.status(200).json({
+    message: "Expense retrieved successfully",
+    expense: expense,
+  });
+});
+
+const updateExpense = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const expenseId = req.params.id;
+
+  const updatedExpense = await Expense.findOneAndUpdate(
+    { _id: expenseId, userId },
+    req.body,
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedExpense) {
+    return next(new customError("Expense not found or update failed", 404));
+  }
+
+  res.status(200).json({
+    message: "Expense updated successfully",
+    expense: updatedExpense,
+  });
+});
+
+const deleteExpense = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  const expenseId = req.params.id;
+
+  const deletedExpense = await Expense.findOneAndDelete({
+    _id: expenseId,
+    userId,
+  });
+
+  if (!deletedExpense) {
+    return next(new customError("Expense not found or delete failed", 404));
+  }
+
+  res.status(204).json({ message: "Expense deleted successfully" });
+});
+
+export {
+  creatExpense,
+  getExpenses,
+  getExpensesById,
+  updateExpense,
+  deleteExpense,
+};

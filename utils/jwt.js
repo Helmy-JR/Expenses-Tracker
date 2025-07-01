@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 
-const signtoken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+const generateToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
-const verifytoken = (token) => {
+const verifyToken = (token) => {
   return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-export { signtoken, verifytoken };
+export { generateToken, verifyToken };
