@@ -2,7 +2,7 @@ import express from "express";
 import {
   signup,
   login,
-  google,
+  googleId,
   sendCode,
   verifyCode,
   resetPassword,
