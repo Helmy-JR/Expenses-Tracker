@@ -29,7 +29,7 @@ const creatExpense = asyncHandler(async (req, res, next) => {
 
 const getExpenses = asyncHandler(async (req, res, next) => {
   const userId = req.user._id;
-  const { filter, startDate, endDate } = req.query;
+  const { filter, startDate, endDate, category } = req.query;
 
   const query = { userId };
 
@@ -48,11 +48,19 @@ const getExpenses = asyncHandler(async (req, res, next) => {
       const threeMonthsAgo = new Date();
       threeMonthsAgo.setMonth(now.getMonth() - 3);
       query.date = { $gte: threeMonthsAgo, $lte: now };
+    } else if (filter === "year") {
+      const yearAgo = new Date();
+      yearAgo.setFullYear(now.getFullYear() - 1);
+      query.date = { $gte: yearAgo, $lte: now };
     }
   }
 
   if (startDate && endDate) {
     query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+  }
+
+  if (category) {
+    query.category = category;
   }
 
   const expenses = await Expense.find(query).sort({ date: -1 });

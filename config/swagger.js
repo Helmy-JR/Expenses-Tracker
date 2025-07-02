@@ -11,7 +11,11 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API documentation for the Expenses Tracker application",
     },
-    servers: [{ url: process.env.BASE_URL }, { url: "http://localhost:4000" }],
+    servers: [
+      {
+        url: process.env.BASE_URL || "http://localhost:3000",
+      },
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -21,11 +25,14 @@ const swaggerOptions = {
         },
       },
     },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: ["./routes/test.js"], // ✅ Make sure this file exists
+  apis: ["./routes/*.js"], // You can change this pattern as needed
 };
-
-
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 

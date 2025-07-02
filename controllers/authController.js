@@ -140,6 +140,8 @@ const googleId = asyncHandler(async (req, res, next) => {
 const sendCode = asyncHandler(async (req, res, next) => {
   let { email } = req.body;
   email = email.trim();
+
+
   if (!email) {
     return next(new customError("Please provide an email", 400));
   }
@@ -152,7 +154,7 @@ const sendCode = asyncHandler(async (req, res, next) => {
 
   const code = Math.floor(1000 + Math.random() * 9000);
 
-  user.resetCode = code;
+  user.resetPasswordCode = code;
   user.resetCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
   await user.save();
@@ -205,12 +207,14 @@ const verifyCode = asyncHandler(async (req, res, next) => {
 
   user.verifiedCode = true;
   await user.save();
+
+  res.status(200).json({ message: "Code verified" });
 });
 
 const resetPassword = asyncHandler(async (req, res, next) => {
   let { email, newPassword } = req.body;
 
-  email = email.trimm();
+  email = email.trim();
   newPassword = newPassword.trim();
 
   if (!email || !newPassword) {
