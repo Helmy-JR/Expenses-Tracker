@@ -14,6 +14,14 @@ import {
 import { isAuthenticated } from "../controllers/userController.js";
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Expenses
+ *   description: Expenses endpoints
+ */
+
 router.use(isAuthenticated);
 
 router.get("/getExpenses", getExpenses);
