@@ -43,6 +43,13 @@ app.use("/api/expenses", expensesRoute);
   next(new customError(`Can't find ${req.originalUrl} on this server!`, 404));
 }); */
 
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "Welcome to the Expense Tracker API",
+  });
+});
+
 app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 3000;
