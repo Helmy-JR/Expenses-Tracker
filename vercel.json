@@ -4,7 +4,7 @@
   "routes": [
     {
       "src": "/api-docs/(.*)",
-      "dest": "/congfig/swagger.json"
+      "dest": "/config/swagger.json"
     },
     {
       "src": "/(.*)",
