@@ -132,9 +132,7 @@ const deleteExpense = asyncHandler(async (req, res, next) => {
 const last5Expenses = asyncHandler(async (req, res, next) => {
   const userId = req.user._id;
 
-  const expenses = await Expense.find({ userId })
-    .sort({ date: -1 })
-    .limit(5);
+  const expenses = await Expense.find({ userId }).sort({ date: -1 }).limit(5);
 
   if (!expenses) {
     return next(new customError("No expenses found", 404));
@@ -146,19 +144,18 @@ const last5Expenses = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 const getMostUsedcategory = asyncHandler(async (req, res, next) => {
   const userId = req.user._id;
-  
+
   const now = new Date();
   const threeMonthsAgo = new Date();
-  threeMonthsAgo.setMonth(now.getMonth()-3);
+  threeMonthsAgo.setMonth(now.getMonth() - 3);
 
   const expenses = await Expense.aggregate([
     { $match: { userId, date: { $gte: threeMonthsAgo, $lte: now } } },
     { $group: { _id: "$category", count: { $sum: 1 } } },
     { $sort: { count: -1 } },
-    { $limit: 1 }
+    { $limit: 1 },
   ]);
 
   if (expenses.length === 0) {
@@ -168,7 +165,7 @@ const getMostUsedcategory = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     message: "Most used category retrieved successfully",
     category: expenses[0]._id,
-    count: expenses[0].count
+    count: expenses[0].count,
   });
 });
 
@@ -177,8 +174,14 @@ const getCategorySummary = asyncHandler(async (req, res, next) => {
 
   const expenses = await Expense.aggregate([
     { $match: { userId } },
-    { $group: { _id: "$category", totalAmount: { $sum: "$amount" }, count: { $sum: 1 } } },
-    { $sort: { totalAmount: -1 } }
+    {
+      $group: {
+        _id: "$category",
+        totalAmount: { $sum: "$amount" },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { totalAmount: -1 } },
   ]);
   if (expenses.length === 0) {
     return next(new customError("No expenses found", 404));
@@ -191,8 +194,7 @@ const getCategorySummary = asyncHandler(async (req, res, next) => {
 
 const highestSpendedCategory = asyncHandler(async (req, res, next) => {
   const userId = req.user._id;
-
-  const now = new Date();
+ const now = new Date();
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(now.getMonth() - 3);
 
@@ -200,7 +202,7 @@ const highestSpendedCategory = asyncHandler(async (req, res, next) => {
     { $match: { userId, date: { $gte: threeMonthsAgo, $lte: now } } },
     { $group: { _id: "$category", totalAmount: { $sum: "$amount" } } },
     { $sort: { totalAmount: -1 } },
-    { $limit: 1 }
+    { $limit: 1 },
   ]);
 
   if (expenses.length === 0) {
@@ -210,9 +212,10 @@ const highestSpendedCategory = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     message: "Highest spent category retrieved successfully",
     category: expenses[0]._id,
-    totalAmount: expenses[0].totalAmount
+    totalAmount: expenses[0].totalAmount,
   });
 });
+ 
 
 const getLastMonthCategorySummary = asyncHandler(async (req, res, next) => {
   const userId = req.user._id;
@@ -223,8 +226,14 @@ const getLastMonthCategorySummary = asyncHandler(async (req, res, next) => {
 
   const expenses = await Expense.aggregate([
     { $match: { userId, date: { $gte: lastMonth, $lte: now } } },
-    { $group: { _id: "$category", totalAmount: { $sum: "$amount" }, count: { $sum: 1 } } },
-    { $sort: { totalAmount: -1 } }
+    {
+      $group: {
+        _id: "$category",
+        totalAmount: { $sum: "$amount" },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { totalAmount: -1 } },
   ]);
 
   if (expenses.length === 0) {
@@ -247,5 +256,5 @@ export {
   getMostUsedcategory,
   getCategorySummary,
   highestSpendedCategory,
-  getLastMonthCategorySummary
+  getLastMonthCategorySummary,
 };
