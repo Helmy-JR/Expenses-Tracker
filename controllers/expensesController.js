@@ -246,6 +246,36 @@ const getLastMonthCategorySummary = asyncHandler(async (req, res, next) => {
   });
 });
 
+const getTotalSpent = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const result = await Expense.aggregate([
+    { $match: { userId } },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: "$amount" },
+        count: { $sum: 1 }
+      },
+    },
+  ]);
+
+  if (result.length === 0) {
+    return res.status(200).json({
+      message: "No expenses found",
+      totalAmount: 0,
+      count: 0,
+    });
+  }
+
+  res.status(200).json({
+    message: "Total spending retrieved successfully",
+    totalAmount: result[0].totalAmount,
+    count: result[0].count,
+  });
+});
+
+
 export {
   creatExpense,
   getExpenses,
@@ -257,4 +287,5 @@ export {
   getCategorySummary,
   highestSpendedCategory,
   getLastMonthCategorySummary,
+  getTotalSpent,
 };

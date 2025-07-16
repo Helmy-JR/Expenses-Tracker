@@ -9,7 +9,8 @@ import {
   getMostUsedcategory,
   getCategorySummary,
   highestSpendedCategory,
-  getLastMonthCategorySummary
+  getLastMonthCategorySummary,
+  getTotalSpent,
 } from "../controllers/expensesController.js";
 import { isAuthenticated } from "../controllers/userController.js";
 
@@ -781,6 +782,55 @@ const router = express.Router();
  *                   example: No expenses found for the last month
  */
 
+/**
+ * @swagger
+ * /api/expenses/total-spent:
+ *   get:
+ *     summary: Get total money spent by the user
+ *     description: Calculates the total amount of money and the number of expenses recorded by the authenticated user since they started using the tracker.
+ *     tags:
+ *       - Expenses
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Total spending retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Total spending retrieved successfully
+ *                 totalAmount:
+ *                   type: number
+ *                   example: 3250
+ *                 count:
+ *                   type: integer
+ *                   example: 27
+ *             example:
+ *               message: Total spending retrieved successfully
+ *               totalAmount: 3250
+ *               count: 27
+ *       200-alt:
+ *         description: No expenses found (still returns 200 with zero values)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No expenses found
+ *                 totalAmount:
+ *                   type: number
+ *                   example: 0
+ *                 count:
+ *                   type: integer
+ *                   example: 0
+ */
+
 
 router.use(isAuthenticated);
 
@@ -791,6 +841,7 @@ router.get("/mostUsedCategory", getMostUsedcategory);
 router.get("/categorySummary", getCategorySummary);
 router.get("/highestSpendedCategory", highestSpendedCategory);
 router.get("/lastMonthCategorySummary", getLastMonthCategorySummary);
+router.get("/getTotalSpent", getTotalSpent);
 router.post("/creatExpense", creatExpense);
 router.patch("/updateExpense/:id", updateExpense);
 router.delete("/deleteExpense/:id", deleteExpense);
