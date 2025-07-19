@@ -22,7 +22,7 @@ const router = express.Router();
  * /api/auth/signup:
  *   post:
  *     summary: Register a new user
- *     description: Create a new user with email , password, firstName, lastName and role.
+ *     description: Create a new user with email , password, firstName and lastName.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -36,7 +36,6 @@ const router = express.Router();
  *               - lastName
  *               - email
  *               - password
- *               - role
  *             properties:
  *               firstName:
  *                 type: string
@@ -50,10 +49,6 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 example: MyStrongPassword123
- *               role:
- *                 enum: [helper, seeker]
- *                 type: string
- *                 example: helper
  *     responses:
  *       200:
  *         description: User registered successfully
@@ -95,7 +90,6 @@ const router = express.Router();
  *             required:
  *               - email
  *               - password
- *               - role
  *             properties:
  *               email:
  *                 type: string
@@ -103,10 +97,6 @@ const router = express.Router();
  *               password:
  *                 type: string
  *                 example: MyStrongPassword123
- *               role:
- *                 enum: [helper, seeker]
- *                 type: string
- *                 example: helper
  *     responses:
  *       200:
  *         description: User logged in successfully
@@ -156,7 +146,7 @@ const router = express.Router();
  * /api/auth/google:
  *   post:
  *     summary: Continue with Google
- *     description: Login a user with googleId, email, firstName, lastName and role.
+ *     description: Login a user with googleId, email, firstName and lastName.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -170,7 +160,6 @@ const router = express.Router();
  *               - email
  *               - firstName
  *               - lastName
- *               - role
  *             properties:
  *               googleId:
  *                 type: string
@@ -184,10 +173,6 @@ const router = express.Router();
  *               lastName:
  *                 type: string
  *                 example: Doe
- *               role:
- *                 enum: [helper, seeker]
- *                 type: string
- *                 example: helper
  *     responses:
  *       200:
  *         description: User logged in successfully
