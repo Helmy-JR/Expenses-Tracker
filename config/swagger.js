@@ -11,7 +11,8 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "API documentation for the Expenses Tracker application",
     },
- {
+    servers: [
+      {
         url: "http://localhost:3000", // Localhost URL
         description: "Local development server",
       },
